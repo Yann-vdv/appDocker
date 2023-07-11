@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  app:
+    container_name: webSite
+    image: httpd
+    restart: always
+    ports:
+      - 3000:80
+    volumes:
+      - ./DATA:/usr/local/apache2/htdocs
+      - ./DATA/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      - php
+      - bdd
+
+  php:
+    container_name: php
+    image: 'bitnami/php-fpm:latest'
+    restart: always
+    volumes:
+      - ./DATA:/usr/local/apache2/htdocs
+    links:
+      - bdd
+
+  bdd:
+    container_name: bdd
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+    ports:
+      - 3306:3306
+    volumes:
+      - ./DATA/bdd:/var/lib/mysql
+
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 3008:8080
