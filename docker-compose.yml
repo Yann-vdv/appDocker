@@ -5,6 +5,7 @@ services:
     container_name: webSite
     image: httpd
     restart: always
+    
     ports:
       - 3000:80
     volumes:
@@ -13,7 +14,7 @@ services:
     depends_on:
       - php
       - bdd
-
+      - api
   php:
     container_name: php
     image: 'bitnami/php-fpm:latest'
@@ -22,6 +23,8 @@ services:
       - ./DATA:/usr/local/apache2/htdocs
     links:
       - bdd
+      - api
+    
 
   bdd:
     container_name: bdd
@@ -33,9 +36,9 @@ services:
       - 3306:3306
     volumes:
       - ./DATA/bdd:/var/lib/mysql
-
-  # adminer:
-  #   image: adminer
-  #   restart: always
-  #   ports:
-  #     - 3008:8080
+  api:
+    container_name: api
+    image: pieryx/api_docker:v1
+    restart: always
+    ports:
+      - 3005:3000
