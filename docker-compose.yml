@@ -1,13 +1,15 @@
 version: '3'
 
+networks:
+  LOCAL:
+
 services:
   app:
     container_name: webSite
     image: httpd
     restart: always
-    
     ports:
-      - 3000:80
+      - 3005:80
     volumes:
       - ./DATA:/usr/local/apache2/htdocs
       - ./DATA/httpd.conf:/usr/local/apache2/conf/httpd.conf
@@ -15,6 +17,10 @@ services:
       - php
       - bdd
       - api
+    networks:
+      - LOCAL
+
+
   php:
     container_name: php
     image: 'bitnami/php-fpm:latest'
@@ -24,7 +30,9 @@ services:
     links:
       - bdd
       - api
-    
+    networks:
+      - LOCAL
+
 
   bdd:
     container_name: bdd
@@ -36,9 +44,13 @@ services:
       - 3306:3306
     volumes:
       - ./DATA/bdd:/var/lib/mysql
+    networks:
+      - LOCAL
+
+
   api:
     container_name: api
     image: pieryx/api_docker:v1
     restart: always
-    ports:
-      - 3005:3000
+    networks:
+      - LOCAL
